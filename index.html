@@ -143,48 +143,48 @@
         <!-- STATS -->
         <section>
             <div class="stats fade">
-                <div><div class="stat-value">6</div><div class="stat-label">Verification Layers</div></div>
-                <div><div class="stat-value">&lt;2m</div><div class="stat-label">Analysis Time</div></div>
-                <div><div class="stat-value">0</div><div class="stat-label">False Positives</div></div>
-                <div><div class="stat-value">HMM</div><div class="stat-label">Regime Detection</div></div>
+                <div><div class="stat-value">4</div><div class="stat-label">Verdict Tiers</div></div>
+                <div><div class="stat-value">3</div><div class="stat-label">Seed Runs</div></div>
+                <div><div class="stat-value">SHA-256</div><div class="stat-label">Cryptographic Hash</div></div>
+                <div><div class="stat-value">Free</div><div class="stat-label">10 Audits to Start</div></div>
             </div>
         </section>
 
         <!-- FEATURES -->
         <section>
-            <div class="section-label">How It Works</div>
-            <div class="section-title">What Adwa Auditor Checks</div>
-            <div class="section-desc">Every strategy gets a credibility score (0-100) based on six forensic verification layers. The engine is called Titanium — it uses HMM regime detection, real indicators, and ML sentiment. Quality threshold is 57 before any signal gets a green light.</div>
+            <div class="section-label">Platform</div>
+            <div class="section-title">What Adwa Auditor Actually Does</div>
+            <div class="section-desc">You upload a strategy (Python + data). We run it through forensic checks — lookahead detection, sandboxed execution, statistical vetoes — and give you a credibility score with a shareable PDF. Deployed on Oracle Cloud, verified via public portal.</div>
             <div class="features-grid">
                 <div class="glass fade d1">
                     <div class="feature-icon" style="background:rgba(239,68,68,0.15)">🔍</div>
-                    <div class="feature-title">Lookahead Bias Detection</div>
-                    <div class="feature-desc">Catches strategies that peek at future data in backtests. Instant REJECT if detected — the #1 silent killer of backtest credibility.</div>
+                    <div class="feature-title">IronDome AST Scanner</div>
+                    <div class="feature-desc">Static analysis that scans your strategy's Abstract Syntax Tree for lookahead bias — negative shifts, future indexing, hardcoded arrays. Instant DISQUALIFIED on violation.</div>
                 </div>
                 <div class="glass fade d2">
-                    <div class="feature-icon" style="background:rgba(77,159,255,0.15)">🧠</div>
-                    <div class="feature-title">Regime Detection (HMM)</div>
-                    <div class="feature-desc">Hidden Markov Model classifies market state as BULL / BEAR / CHOP. Does your strategy work in all three regimes, or just one?</div>
+                    <div class="feature-icon" style="background:rgba(77,159,255,0.15)">🧪</div>
+                    <div class="feature-title">Sandboxed Execution</div>
+                    <div class="feature-desc">Your strategy runs in a locked-down Python subprocess — 30s CPU, 512MB RAM, filesystem access blocked, dangerous modules (os, subprocess, requests) disabled. 3 runs with different seeds.</div>
                 </div>
                 <div class="glass fade d3">
-                    <div class="feature-icon" style="background:rgba(168,85,247,0.15)">📈</div>
-                    <div class="feature-title">Momentum & Volatility Scoring</div>
-                    <div class="feature-desc">RSI and Average True Range drive momentum and risk scoring. Garman-Klass Volatility measures true high/low range — more efficient than close-to-close.</div>
+                    <div class="feature-icon" style="background:rgba(168,85,247,0.15)">📊</div>
+                    <div class="feature-title">Statistical Vetoes</div>
+                    <div class="feature-desc">Sharpe ratio > 8.0? 100% win rate? Zero volatility? Instant DISQUALIFIED. We catch strategies that look "too good to be true" — because they are.</div>
                 </div>
                 <div class="glass fade d4">
-                    <div class="feature-icon" style="background:rgba(0,229,255,0.15)">📊</div>
-                    <div class="feature-title">Trend Efficiency + VWAP</div>
-                    <div class="feature-desc">Measures directional efficiency vs noise and deviation from Volume-Weighted Average Price. Flags strategies trading against the prevailing trend.</div>
+                    <div class="feature-icon" style="background:rgba(0,229,255,0.15)">⚖️</div>
+                    <div class="feature-title">Sovereign Scale Scoring</div>
+                    <div class="feature-desc">Execution Realism, Causal Accuracy, and Reproducibility map to a 4-tier verdict: PASS, PASS WITH RISK, REVIEW, or REJECT. One credibility score to rule them all.</div>
                 </div>
                 <div class="glass fade d4">
-                    <div class="feature-icon" style="background:rgba(255,215,0,0.15)">⚡</div>
-                    <div class="feature-title">Slippage-Adjusted P&L</div>
-                    <div class="feature-desc">Realistic execution modeling with slippage and commissions. Not perfect-fill fantasy — what you'd actually get in live markets.</div>
+                    <div class="feature-icon" style="background:rgba(255,215,0,0.15)">🔒</div>
+                    <div class="feature-title">Cryptographic Ledger</div>
+                    <div class="feature-desc">Every audit gets a SHA-256 deterministic run hash. Public verification portal lets anyone check a result by hash. No tampering, no faking.</div>
                 </div>
                 <div class="glass fade d5">
-                    <div class="feature-icon" style="background:rgba(34,197,94,0.15)">💬</div>
-                    <div class="feature-title">ML Sentiment Analysis</div>
-                    <div class="feature-desc">Google Natural Language API scores real-time market sentiment from news. Integrated as a weight in the Titanium scoring engine.</div>
+                    <div class="feature-icon" style="background:rgba(34,197,94,0.15)">📄</div>
+                    <div class="feature-title">PDF Report + QR Code</div>
+                    <div class="feature-desc">Pro+ audits get a cryptographic PDF with ASCII-scrubbed formatting and QR code linking to the verification portal. Share it with prop firms or keep it private.</div>
                 </div>
             </div>
         </section>
@@ -192,22 +192,22 @@
         <!-- HOW IT WORKS -->
         <section>
             <div class="section-label">Process</div>
-            <div class="section-title">Three Steps to Verification</div>
+            <div class="section-title">The Audit Pipeline</div>
             <div class="steps">
                 <div class="glass step fade d1">
                     <div class="step-num">01</div>
                     <div class="step-title">Upload Strategy</div>
-                    <div class="step-desc">Connect your backtest data or Alpaca account. We accept CSV, JSON, or direct API connections.</div>
+                    <div class="step-desc">Drop your strategy.py + data.csv into the sandbox. JWT auth, credits deducted immediately. Free tier gets 10 audits.</div>
                 </div>
                 <div class="glass step fade d2">
                     <div class="step-num">02</div>
-                    <div class="step-title">Forensic Analysis</div>
-                    <div class="step-desc">Six verification layers run automatically. Lookahead checks, regime detection, volatility stress testing, and more.</div>
+                    <div class="step-title">IronDome + Sandbox</div>
+                    <div class="step-desc">AST lookahead scan → sandboxed Python execution (30s CPU, 512MB RAM, filesystem locked). 3 runs with different seeds for reproducibility.</div>
                 </div>
                 <div class="glass step fade d3">
                     <div class="step-num">03</div>
-                    <div class="step-title">Get Your Score</div>
-                    <div class="step-desc">Receive a credibility score and detailed PDF report. Pass it to your prop firm, or use it to fix your strategy.</div>
+                    <div class="step-title">Score + Verify</div>
+                    <div class="step-desc">Statistical vetoes fire. Sovereign Scale verdict issued. SHA-256 hash generated. PDF with QR code for Pro+ users. Results live on the public verification portal.</div>
                 </div>
             </div>
         </section>
@@ -216,27 +216,30 @@
         <section id="demo">
             <div class="section-label">Sample Report</div>
             <div class="section-title">What You Get</div>
-            <div class="section-desc">Every audit produces a detailed PDF with scores, diagnostics, and actionable findings.</div>
+            <div class="section-desc">Every audit produces a verdict on the Sovereign Scale, plus a credibility score. Here's what a real audit looks like:</div>
             <div class="sample-grid">
                 <div class="glass fade d1">
-                    <div style="font-size:16px;font-weight:600;margin-bottom:16px">Strategy: Momentum RSI-2</div>
-                    <div class="sample-metric"><span class="metric-label">Credibility Score</span><span class="metric-value" style="color:var(--amber)">72/100</span></div>
-                    <div class="sample-metric"><span class="metric-label">Lookahead Bias</span><span class="badge badge-pass">PASS</span></div>
-                    <div class="sample-metric"><span class="metric-label">Data Leakage</span><span class="badge badge-pass">PASS</span></div>
-                    <div class="sample-metric"><span class="metric-label">Regime Dependency</span><span class="badge badge-reject">REJECT</span></div>
-                    <div class="sample-metric"><span class="metric-label">Volatility Stress</span><span class="badge badge-pass">PASS</span></div>
-                    <div class="sample-metric"><span class="metric-label">Primary Regime</span><span class="metric-value">BULL</span></div>
-                    <div class="sample-metric"><span class="metric-label">Slippage Impact</span><span class="metric-value">-12.3%</span></div>
+                    <div style="font-size:16px;font-weight:600;margin-bottom:16px">Sample Strategy Audit</div>
+                    <div class="sample-metric"><span class="metric-label">Verdict</span><span class="badge badge-pass">PASS WITH RISK</span></div>
+                    <div class="sample-metric"><span class="metric-label">Credibility Score</span><span class="metric-value" style="color:var(--gold)">67/100</span></div>
+                    <div class="sample-metric"><span class="metric-label">IronDome Lookahead</span><span class="badge badge-pass">PASS</span></div>
+                    <div class="sample-metric"><span class="metric-label">Statistical Vetoes</span><span class="badge badge-pass">PASS</span></div>
+                    <div class="sample-metric"><span class="metric-label">Execution Realism</span><span class="metric-value">72%</span></div>
+                    <div class="sample-metric"><span class="metric-label">Reproducibility</span><span class="metric-value">94%</span></div>
+                    <div class="sample-metric"><span class="metric-label">Run Hash (SHA-256)</span><span class="metric-value" style="font-size:11px">a3f8c9...e2b1</span></div>
+                    <div class="sample-metric"><span class="metric-label">Credits Used</span><span class="metric-value">1</span></div>
                 </div>
                 <div class="glass fade d2" style="display:flex;flex-direction:column;justify-content:center">
                     <div style="font-size:15px;color:var(--muted);line-height:1.8">
-                        <p>This strategy performs well in <strong style="color:var(--text)">bull markets</strong> but degrades significantly during chop. The regime dependency flag indicates it only works in 1 of 3 market conditions.</p>
+                        <p><strong style="color:var(--text)">IronDome passed clean</strong> — no lookahead bias detected. The strategy isn't cheating.</p>
                         <br>
-                        <p>Lookahead and leakage checks passed clean — the strategy isn't cheating. But slippage eats 12% of backtest returns, and the strategy breaks entirely during high-volatility events.</p>
+                        <p><strong style="color:var(--gold)">Execution realism at 72%</strong> — slippage and liquidity impact are significant. Backtest returns would drop meaningfully in live markets.</p>
                         <br>
-                        <p><strong style="color:var(--red)">Recommendation:</strong> Do not fund without regime filters. Add a volatility gate and trend efficiency check before going live.</p>
+                        <p><strong style="color:var(--text)">Reproducibility: 94%</strong> — strategy produces consistent results across seeded runs. High confidence the numbers are real.</p>
+                        <br>
+                        <p>Every audit gets a cryptographic SHA-256 hash. Anyone can verify the result on our public portal — no account needed.</p>
                     </div>
-                    <a href="https://adwaaudit.com" class="btn btn-ghost" target="_blank" style="margin-top:24px;align-self:flex-start">📄 Download Full Sample Report (PDF)</a>
+                    <a href="https://adwaaudit.com" class="btn btn-ghost" style="margin-top:24px;align-self:flex-start">📄 Get Your Audit at adwaaudit.com</a>
                 </div>
             </div>
         </section>
