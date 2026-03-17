@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adwa Auditor — AI Strategy Verification Engine</title>
+    <meta name="description" content="Forensic verification for algo trading strategies. Regime detection, lookahead bias analysis, slippage modeling.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --bg: #050510;
+            --card: rgba(15, 15, 35, 0.6);
+            --border: rgba(255, 255, 255, 0.06);
+            --glow: rgba(100, 180, 255, 0.3);
+            --text: #e8eaf0;
+            --muted: #8890a4;
+            --dim: #505872;
+            --blue: #4d9fff;
+            --cyan: #00e5ff;
+            --purple: #a855f7;
+            --green: #22c55e;
+            --red: #ef4444;
+            --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* === AURORA === */
+        .aurora { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.25; animation: drift 25s ease-in-out infinite; }
+        .blob:nth-child(1) { width: 600px; height: 600px; background: radial-gradient(circle, rgba(77,159,255,0.4), transparent); top: -200px; left: -100px; }
+        .blob:nth-child(2) { width: 500px; height: 500px; background: radial-gradient(circle, rgba(168,85,247,0.35), transparent); top: 50%; right: -150px; animation-delay: -8s; }
+        .blob:nth-child(3) { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,229,255,0.25), transparent); bottom: -100px; left: 30%; animation-delay: -16s; }
+        @keyframes drift { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(80px,-50px) scale(1.1); } 66% { transform: translate(-50px,80px) scale(0.9); } }
+        .grid-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: 1; pointer-events: none; }
+
+        .content { position: relative; z-index: 2; }
+
+        /* === HERO === */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 100px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+        .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } }
+        .hero-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(36px, 7vw, 72px); font-weight: 700; letter-spacing: -2px; line-height: 1.1; background: linear-gradient(135deg, #fff 0%, #4d9fff 50%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease-in-out infinite; background-size: 200% 100%; }
+        @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .hero-sub { font-size: clamp(16px, 2.5vw, 22px); color: var(--muted); margin-top: 16px; max-width: 600px; line-height: 1.6; font-weight: 300; }
+        .hero-cta { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 14px 32px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; font-family: 'Inter', sans-serif; }
+        .btn-primary { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; box-shadow: 0 0 20px rgba(77,159,255,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(77,159,255,0.5); }
+        .btn-ghost { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); }
+        .btn-ghost:hover { border-color: var(--glow); background: rgba(255,255,255,0.06); }
+
+        /* === SECTIONS === */
+        section { max-width: 1200px; margin: 0 auto; padding: 80px 24px; }
+        .section-label { font-size: 12px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; }
+        .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 42px); font-weight: 600; letter-spacing: -1px; margin-bottom: 16px; }
+        .section-desc { font-size: 16px; color: var(--muted); max-width: 600px; line-height: 1.7; }
+
+        /* === GLASS CARD === */
+        .glass { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; backdrop-filter: blur(20px); transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .glass::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+        .glass:hover { border-color: var(--glow); transform: translateY(-4px); box-shadow: 0 0 30px rgba(77,159,255,0.1); }
+
+        /* === FEATURES === */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
+        .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+        .feature-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+        /* === HOW IT WORKS === */
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-top: 40px; }
+        .step { text-align: center; padding: 32px 20px; }
+        .step-num { font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 700; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
+        .step-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .step-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+        /* === STATS === */
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 40px; }
+        .stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 700; background: linear-gradient(135deg, var(--cyan), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* === SAMPLE === */
+        .sample-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+        .sample-metric { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+        .sample-metric:last-child { border: none; }
+        .metric-label { font-size: 14px; color: var(--muted); }
+        .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .badge-reject { background: rgba(239,68,68,0.15); color: var(--red); }
+        .badge-pass { background: rgba(34,197,94,0.15); color: var(--green); }
+
+        /* === CTA === */
+        .cta-section { text-align: center; padding: 100px 24px; }
+        .cta-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 5vw, 48px); font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+        .cta-sub { font-size: 18px; color: var(--muted); margin-bottom: 40px; }
+
+        /* === FOOTER === */
+        footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--dim); }
+        footer a { color: var(--blue); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* === ANIM === */
+        .fade { opacity: 0; transform: translateY(30px); animation: fadeUp 0.7s ease forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .d1 { animation-delay: 0.1s; } .d2 { animation-delay: 0.2s; } .d3 { animation-delay: 0.3s; } .d4 { animation-delay: 0.4s; } .d5 { animation-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .sample-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr 1fr; }
+            section { padding: 60px 16px; }
+        }
+        @media (max-width: 480px) {
+            .steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="aurora"><div class="blob"></div><div class="blob"></div><div class="blob"></div></div>
+    <div class="grid-bg"></div>
+
+    <div class="content">
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-badge fade"><div class="dot"></div> AI-Powered Verification Engine</div>
+            <h1 class="hero-title fade d1">Your Strategy's<br>Worst Enemy</h1>
+            <p class="hero-sub fade d2">Forensic verification for algo trading strategies. We catch what backtests miss — regime dependency, lookahead bias, curve-fitting, and execution gaps.</p>
+            <div class="hero-cta fade d3">
+                <a href="#demo" class="btn btn-primary">See Sample Audit</a>
+                <a href="https://github.com/messaynew-cyber" class="btn btn-ghost" target="_blank">View on GitHub</a>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <section>
+            <div class="stats fade">
+                <div><div class="stat-value">6</div><div class="stat-label">Verification Layers</div></div>
+                <div><div class="stat-value">&lt;2m</div><div class="stat-label">Analysis Time</div></div>
+                <div><div class="stat-value">0</div><div class="stat-label">False Positives</div></div>
+                <div><div class="stat-value">HMM</div><div class="stat-label">Regime Detection</div></div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section>
+            <div class="section-label">Capabilities</div>
+            <div class="section-title">Six Layers of Verification</div>
+            <div class="section-desc">Each layer catches a different class of failure. Together, they answer one question: will this strategy survive live markets?</div>
+            <div class="features-grid">
+                <div class="glass fade d1">
+                    <div class="feature-icon" style="background:rgba(239,68,68,0.15)">🔍</div>
+                    <div class="feature-title">IronDome Lookahead Detection</div>
+                    <div class="feature-desc">Catches strategies that peek at future data. Instant REJECT if detected. The #1 silent killer of backtests.</div>
+                </div>
+                <div class="glass fade d2">
+                    <div class="feature-icon" style="background:rgba(77,159,255,0.15)">🧠</div>
+                    <div class="feature-title">HMM Regime Classification</div>
+                    <div class="feature-desc">Hidden Markov Model identifies BULL / BEAR / CHOP regimes. Does your strategy work in all three, or just one?</div>
+                </div>
+                <div class="glass fade d3">
+                    <div class="feature-icon" style="background:rgba(168,85,247,0.15)">📊</div>
+                    <div class="feature-title">Garman-Klass Volatility</div>
+                    <div class="feature-desc">High/low-based volatility estimator that's more efficient than close-to-close. Catches strategies that break during spikes.</div>
+                </div>
+                <div class="glass fade d4">
+                    <div class="feature-icon" style="background:rgba(0,229,255,0.15)">📉</div>
+                    <div class="feature-title">Trend Efficiency Score</div>
+                    <div class="feature-desc">Measures directional efficiency vs noise. Flags mean-reversion strategies hiding in trending markets and vice versa.</div>
+                </div>
+                <div class="glass fade d5">
+                    <div class="feature-icon" style="background:rgba(255,215,0,0.15)">⚡</div>
+                    <div class="feature-title">Slippage-Adjusted P&L</div>
+                    <div class="feature-desc">Realistic execution modeling with slippage and commissions. Not perfect-fill fantasy — what you'd actually get.</div>
+                </div>
+                <div class="glass fade d5">
+                    <div class="feature-icon" style="background:rgba(34,197,94,0.15)">✅</div>
+                    <div class="feature-title">Credibility Score + PDF Report</div>
+                    <div class="feature-desc">One number (0-100) that summarizes strategy robustness. Shareable PDF report for prop firms, partners, or your own records.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section>
+            <div class="section-label">Process</div>
+            <div class="section-title">Three Steps to Verification</div>
+            <div class="steps">
+                <div class="glass step fade d1">
+                    <div class="step-num">01</div>
+                    <div class="step-title">Upload Strategy</div>
+                    <div class="step-desc">Connect your backtest data or Alpaca account. We accept CSV, JSON, or direct API connections.</div>
+                </div>
+                <div class="glass step fade d2">
+                    <div class="step-num">02</div>
+                    <div class="step-title">Forensic Analysis</div>
+                    <div class="step-desc">Six verification layers run automatically. Lookahead checks, regime detection, volatility stress testing, and more.</div>
+                </div>
+                <div class="glass step fade d3">
+                    <div class="step-num">03</div>
+                    <div class="step-title">Get Your Score</div>
+                    <div class="step-desc">Receive a credibility score and detailed PDF report. Pass it to your prop firm, or use it to fix your strategy.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SAMPLE AUDIT -->
+        <section id="demo">
+            <div class="section-label">Sample Report</div>
+            <div class="section-title">What You Get</div>
+            <div class="section-desc">Every audit produces a detailed PDF with scores, diagnostics, and actionable findings.</div>
+            <div class="sample-grid">
+                <div class="glass fade d1">
+                    <div style="font-size:16px;font-weight:600;margin-bottom:16px">Strategy: Momentum RSI-2</div>
+                    <div class="sample-metric"><span class="metric-label">Credibility Score</span><span class="metric-value" style="color:var(--amber)">72/100</span></div>
+                    <div class="sample-metric"><span class="metric-label">Lookahead Bias</span><span class="badge badge-pass">PASS</span></div>
+                    <div class="sample-metric"><span class="metric-label">Data Leakage</span><span class="badge badge-pass">PASS</span></div>
+                    <div class="sample-metric"><span class="metric-label">Regime Dependency</span><span class="badge badge-reject">REJECT</span></div>
+                    <div class="sample-metric"><span class="metric-label">Volatility Stress</span><span class="badge badge-pass">PASS</span></div>
+                    <div class="sample-metric"><span class="metric-label">Primary Regime</span><span class="metric-value">BULL</span></div>
+                    <div class="sample-metric"><span class="metric-label">Slippage Impact</span><span class="metric-value">-12.3%</span></div>
+                </div>
+                <div class="glass fade d2" style="display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:15px;color:var(--muted);line-height:1.8">
+                        <p>This strategy performs well in <strong style="color:var(--text)">bull markets</strong> but degrades significantly during chop. The regime dependency flag indicates it only works in 1 of 3 market conditions.</p>
+                        <br>
+                        <p>Lookahead and leakage checks passed clean — the strategy isn't cheating. But slippage eats 12% of backtest returns, and the strategy breaks entirely during high-volatility events.</p>
+                        <br>
+                        <p><strong style="color:var(--red)">Recommendation:</strong> Do not fund without regime filters. Add a volatility gate and trend efficiency check before going live.</p>
+                    </div>
+                    <a href="https://github.com/messaynew-cyber/adwa-backups" class="btn btn-ghost" target="_blank" style="margin-top:24px;align-self:flex-start">📄 View Full Sample Report</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <div class="cta-title fade">Ready to Stress-Test<br>Your Edge?</div>
+            <div class="cta-sub fade">Built in Addis Ababa. Verifying strategies worldwide.</div>
+            <div class="fade">
+                <a href="mailto:info@adwaaudit.com" class="btn btn-primary">Get Your Audit</a>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2026 <a href="https://adwaaudit.com">Adwa Auditor</a> · Built in Addis Ababa, Ethiopia 🇪🇹 · Powered by Titanium Engine</p>
+            <p style="margin-top:8px">Open source on <a href="https://github.com/messaynew-cyber">GitHub</a> · <a href="https://twitter.com/AdwaAuditor">@AdwaAuditor</a></p>
+        </footer>
+    </div>
+</body>
+</html>
